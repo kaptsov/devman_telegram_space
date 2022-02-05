@@ -31,7 +31,6 @@ def fetch_spacex_last_launch(url, directory):
 
     for image_number, image_url in enumerate(images_list):
         image_name = f'spacex_{image_number}.jpg'
-        description = f'SpaceX image number {image_number}'
         download_image(image_url, directory, image_name)
 
 
@@ -56,7 +55,6 @@ def download_nasa_pics(url_list, directory, is_it_epic):
         day = '%02d' % date_time.day
         month = '%02d' % date_time.month
         year = date_time.year
-        description = f'Nasa pic {nasa_num}'
         image_name = f'{directory[6:10]}_{year}-' \
                       f'{month}-{day}-{nasa_num}{file_ext}'
 
@@ -91,17 +89,18 @@ def upload_images():
 
 if __name__ == '__main__':
 
-    spacex_dir = "pics/spacex_pic/"
-    spacex_url = "https://api.spacexdata.com/v3/launches/67"
-    fetch_spacex_last_launch(spacex_url, spacex_dir)
-
-    nasa_pic_dir = 'pics/daily_nasa/'
-    nasa_url = 'https://api.nasa.gov/planetary/apod?api_key='
-    download_nasa_pics(nasa_url, nasa_pic_dir, False)
-
-    nasa_epic_dir = 'pics/epics_nasa/'
-    nasa_epic_url = 'https://api.nasa.gov/EPIC/api/natural?api_key='
-    download_nasa_pics(nasa_epic_url, nasa_epic_dir, True)
-
     while(True):
+
+        spacex_dir = "pics/spacex_pic/"
+        spacex_url = "https://api.spacexdata.com/v3/launches/67"
+        fetch_spacex_last_launch(spacex_url, spacex_dir)
+
+        nasa_pic_dir = 'pics/daily_nasa/'
+        nasa_url = 'https://api.nasa.gov/planetary/apod?api_key='
+        download_nasa_pics(nasa_url, nasa_pic_dir, False)
+
+        nasa_epic_dir = 'pics/epics_nasa/'
+        nasa_epic_url = 'https://api.nasa.gov/EPIC/api/natural?api_key='
+        download_nasa_pics(nasa_epic_url, nasa_epic_dir, True)
+
         upload_images()
