@@ -1,7 +1,10 @@
-import requests
-import os
 import datetime
+
+import os
+import requests
 from dotenv import load_dotenv
+
+import telegram
 
 
 def download_image(url, directory, filename):
@@ -66,6 +69,15 @@ def download_nasa_pics(url_list, directory, is_it_epic):
 
 if __name__ == '__main__':
 
+    load_dotenv()
+    telegram_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    bot = telegram.Bot(token=telegram_token)
+
+    print(bot.get_me())
+    updates = bot.get_updates()
+    print(updates[0])
+    bot.send_message(text='Привет, Оля!', chat_id=-1001681623193)
+
     spacex_dir = "spacex_pic/"
     spacex_url = "https://api.spacexdata.com/v3/launches/67"
     fetch_spacex_last_launch(spacex_url, spacex_dir)
@@ -77,3 +89,5 @@ if __name__ == '__main__':
     nasa_epic_dir = 'epics_nasa/'
     nasa_epic_url = 'https://api.nasa.gov/EPIC/api/natural?api_key='
     download_nasa_pics(nasa_epic_url, nasa_epic_dir, True)
+
+
