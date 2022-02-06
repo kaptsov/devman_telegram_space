@@ -4,11 +4,19 @@ The script downloads photos to the local "pics" folder, and then publishes them 
 
 ### How to install
 
+Python3 should be already installed. 
+Then use `pip` (or `pip3`, if there is a conflict with Python2) to install dependencies:
+```
+pip install -r requirements.txt
+```
+
+
 For the script to work, you should create a **".env"** file, in which you need to create three variables:
 
 ```
 NASA_TOKEN="token"
 TELEGRAM_BOT_TOKEN="token"
+TELEGRAM_CHAT_NAME="@telegramchannelname"
 TIMER_PERIOD=[sec]
 ```
 
@@ -18,11 +26,8 @@ To get **TELEGRAM_BOT_TOKEN** you need to learn how to create bots in telegrams 
 
 The **TIMER_PERIOD** variable is responsible for the time interval between photo publications. The default value is 84300 (seconds) if no value is specified. But if you want faster, change the value to the desired number of seconds.
 
-Python3 should be already installed. 
-Then use `pip` (or `pip3`, if there is a conflict with Python2) to install dependencies:
-```
-pip install -r requirements.txt
-```
+In the **TELEGRAM_CHAT_NAME** variable, put the name of your channel, in the form "@channel"
+
 
 ### Project Goals
 
@@ -34,11 +39,18 @@ The code is written for educational purposes on online-course for web-developers
 
 ### Как установить
 
+Python3 должен быть уже установлен. 
+Затем используйте `pip` (или `pip3`, есть есть конфликт с Python2) для установки зависимостей:
+```
+pip install -r requirements.txt
+```
+
 Для работы скрипта следует создать файл **".env"**, в котором необходимо создать три переменные:
 
 ```
 NASA_TOKEN="token"
 TELEGRAM_BOT_TOKEN="token"
+TELEGRAM_CHAT_NAME="@telegramchannelname"
 TIMER_PERIOD=[sec]
 ```
 
@@ -48,12 +60,8 @@ TIMER_PERIOD=[sec]
 
 Переменная **TIMER_PERIOD** отвечает за интервал времени между публикациями фотографий. По умолчанию стоит значени 84300 (секунд), если никакое значение не указывать. Но если хочется быстрее, измените значение на нужное количество секунд.
 
+В переменную **TELEGRAM_CHAT_NAME** следует поместить имя вашего канала, в виде "@channel"
 
-Python3 должен быть уже установлен. 
-Затем используйте `pip` (или `pip3`, есть есть конфликт с Python2) для установки зависимостей:
-```
-pip install -r requirements.txt
-```
 
 ### Цель проекта
 
