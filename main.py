@@ -4,103 +4,127 @@ import requests
 from dotenv import load_dotenv
 import telegram
 from os import listdir
-from os.path import isfile
-from os.path import join as joinpath
 import time
+import random
 
 
-def download_image(url, directory, filename):
+def download_image(url, directory, image_name):
 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    os.makedirs(directory, exist_ok=True)
 
     response = requests.get(url)
     response.raise_for_status()
 
-    full_filename = directory + filename
-    with open(full_filename, 'wb') as file:
+    full_image_name = f'{directory}{image_name}'
+    with open(full_image_name, 'wb') as file:
         file.write(response.content)
 
 
-def fetch_spacex_last_launch(url, directory):
+def fetch_spacex_last_launch():
 
-    response = requests.get(url)
+    launch_rand_num = random.randint(1, 110)
+    spacex_dir = "pics/spacex_pic/"
+    spacex_url = f"https://api.spacexdata.com/v3/" \
+                 f"launches/{launch_rand_num}"
+
+    response = requests.get(spacex_url)
     response.raise_for_status()
 
     images_list = response.json()['links']['flickr_images']
 
     for image_number, image_url in enumerate(images_list):
         image_name = f'spacex_{image_number}.jpg'
-        download_image(image_url, directory, image_name)
+        download_image(image_url, spacex_dir, image_name)
 
 
-def download_nasa_pics(url_list, directory, is_it_epic):
+def download_nasa_daily_pics(nasa_token):
 
-    load_dotenv()
-    nasa_token = os.getenv("NASA_TOKEN")
-    nasa_pic_count = 3
-    data = f'count={nasa_pic_count}'
+    pic_amount = 3
+    params = {
+        'count': pic_amount,
+        'api_key': nasa_token
+    }
 
-    response = requests.get(url_list+nasa_token, params=data)
+    nasa_pic_dir = 'pics/daily_nasa/'
+    nasa_url = 'https://api.nasa.gov/planetary/apod'
+
+    response = requests.get(nasa_url,
+                            params=params)
     response.raise_for_status()
 
-    for nasa_num, nasa_link in enumerate(response.json()):
+    for pic_num, nasa_link in enumerate(response.json()):
 
-        if is_it_epic:
-            file_ext = '.png'
-        else:
-            file_ext = os.path.splitext(nasa_link['url'])[1]
+        file_ext = os.path.splitext(nasa_link['url'])[1]
 
         date_time = datetime.datetime.fromisoformat(nasa_link['date'])
         day = '%02d' % date_time.day
         month = '%02d' % date_time.month
         year = date_time.year
-        image_name = f'{directory[6:10]}_{year}-' \
-                      f'{month}-{day}-{nasa_num}{file_ext}'
+        image_name = f'{nasa_pic_dir[5:10]}_{year}-' \
+                     f'{month}-{day}-{pic_num}{file_ext}'
 
-        if is_it_epic:
-            pic_link = f'https://api.nasa.gov/EPIC/archive/natural/' \
-                       f'{year}/{month}/{day}/png/{nasa_link["image"]}' \
-                       f'.png?api_key={nasa_token}'
-        else:
-            pic_link = nasa_link['url']
+        pic_link = nasa_link['url']
 
-        download_image(pic_link, directory, image_name)
+        download_image(pic_link, nasa_pic_dir, image_name)
 
 
-def upload_images():
+def upload_images(telegram_token, chat_name, update_period):
 
-    load_dotenv()
-    telegram_token = os.getenv("TELEGRAM_BOT_TOKEN")
     bot = telegram.Bot(token=telegram_token)
-    updates = bot.get_updates()
-    chat_id = updates[0]['my_chat_member']['chat']['id']
+    chat_id = bot.get_chat(chat_name, timeout=100)['id']
     pic_path = "pics"
-    seconds = int(os.getenv("TIMER_PERIOD", default=86400))
 
-    for i in listdir(pic_path):
-        for inner_pic_path in listdir(f'{pic_path}/{i}'):
-            photo_path = f'{pic_path}/{i}/{inner_pic_path}'
+    for dir_counter in listdir(pic_path):
+        for inner_pic_path in listdir(f'{pic_path}/{dir_counter}'):
+            photo_path = f'{pic_path}/{dir_counter}/{inner_pic_path}'
             bot.send_photo(chat_id=chat_id,
                            photo=open(photo_path, 'rb'),
                            timeout=2000)
-            time.sleep(seconds)
+            time.sleep(update_period)
+
+
+def download_nasa_epics(nasa_token):
+
+    epic_dir = 'pics/epics_nasa/'
+    epic_url = 'https://api.nasa.gov/EPIC/api/natural'
+    file_ext = '.png'
+    params = {
+        'api_key': nasa_token
+    }
+
+    response = requests.get(epic_url, params=params)
+    response.raise_for_status()
+
+    for pic_num, nasa_link in enumerate(response.json()):
+
+        date_time = datetime.datetime.fromisoformat(nasa_link['date'])
+        day = '%02d' % date_time.day
+        month = '%02d' % date_time.month
+        year = date_time.year
+        image_name = f'{epic_dir[5:10]}_{year}-' \
+                     f'{month}-{day}-{pic_num}{file_ext}'
+
+        pic_link = f'https://api.nasa.gov/EPIC/archive/natural/' \
+                   f'{year}/{month}/{day}/png/{nasa_link["image"]}' \
+                   f'.png?api_key={nasa_token}'
+
+        download_image(pic_link, epic_dir, image_name)
 
 
 if __name__ == '__main__':
 
+    load_dotenv()
+    nasa_token = os.getenv("NASA_TOKEN")
+    telegram_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_name = os.getenv("TELEGRAM_CHAT_NAME")
+    update_period = int(os.getenv("TIMER_PERIOD", default=86400))
+
     while(True):
 
-        spacex_dir = "pics/spacex_pic/"
-        spacex_url = "https://api.spacexdata.com/v3/launches/67"
-        fetch_spacex_last_launch(spacex_url, spacex_dir)
+        fetch_spacex_last_launch()
 
-        nasa_pic_dir = 'pics/daily_nasa/'
-        nasa_url = 'https://api.nasa.gov/planetary/apod?api_key='
-        download_nasa_pics(nasa_url, nasa_pic_dir, False)
+        download_nasa_daily_pics(nasa_token)
 
-        nasa_epic_dir = 'pics/epics_nasa/'
-        nasa_epic_url = 'https://api.nasa.gov/EPIC/api/natural?api_key='
-        download_nasa_pics(nasa_epic_url, nasa_epic_dir, True)
+        download_nasa_epics(nasa_token)
 
-        upload_images()
+        upload_images(telegram_token, chat_name, update_period)
