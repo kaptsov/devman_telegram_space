@@ -10,8 +10,7 @@ Then use `pip` (or `pip3`, if there is a conflict with Python2) to install depen
 pip install -r requirements.txt
 ```
 
-
-For the script to work, you should create a **".env"** file, in which you need to create three variables:
+For the script to work, create the **".env"** file in the project folder, in which you need to create variables:
 
 ```
 NASA_TOKEN="token"
@@ -26,7 +25,17 @@ To get **TELEGRAM_BOT_TOKEN** you need to learn how to create bots in telegrams 
 
 The **TIMER_PERIOD** variable is responsible for the time interval between photo publications. The default value is 84300 (seconds) if no value is specified. But if you want faster, change the value to the desired number of seconds.
 
+Add the created bot to administrators in your telegram channel.
+
 In the **TELEGRAM_CHAT_NAME** variable, put the name of your channel, in the form "@channel"
+
+Then write in the console:
+
+```
+python main.py
+```
+
+The script will run, first download photos to the "pics" directory and then you will see how the bot will upload photos one by one to the channel with a frequency of **TIMER_PERIOD**.
 
 
 ### Project Goals
@@ -45,7 +54,7 @@ Python3 должен быть уже установлен.
 pip install -r requirements.txt
 ```
 
-Для работы скрипта следует создать файл **".env"**, в котором необходимо создать три переменные:
+Для работы скрипта следует в папке с проектом создать файл **".env"**, в котором необходимо создать переменные:
 
 ```
 NASA_TOKEN="token"
@@ -60,7 +69,17 @@ TIMER_PERIOD=[sec]
 
 Переменная **TIMER_PERIOD** отвечает за интервал времени между публикациями фотографий. По умолчанию стоит значени 84300 (секунд), если никакое значение не указывать. Но если хочется быстрее, измените значение на нужное количество секунд.
 
+В ваш канал в телеграмме добавьте созданного бота в администраторы.
+
 В переменную **TELEGRAM_CHAT_NAME** следует поместить имя вашего канала, в виде "@channel"
+
+Затем в консоли прописать:
+
+```
+python main.py
+```
+
+Скрипт запустится, сначала скачает фотографии в директорию "pics" а затем вы увидите, как бот будет загружать фотографии по одной в канал с периодичностью **TIMER_PERIOD**.
 
 
 ### Цель проекта
