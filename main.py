@@ -86,7 +86,7 @@ def upload_images_to_telegram(telegram_token, chat_name, update_period):
             time.sleep(update_period)
 
 
-def download_nasa_epics(nasa_token, epic_dir):
+def download_nasa_epics(epic_dir):
 
     epic_url = 'https://epic.gsfc.nasa.gov/api/images.php'
     file_ext = '.png'
