@@ -25,7 +25,7 @@ def download_image(url, full_image_name):
 def fetch_spacex_random_launch(spacex_dir):
 
     images_collection = []
-    while len(images_collection) == 0:
+    while not len(images_collection):
         random_launch_num = random.randint(1, 110)
         spacex_url = f"https://api.spacexdata.com/v3/launches/" \
                      f"{random_launch_num}"
@@ -50,8 +50,10 @@ def download_nasa_daily_pics(nasa_token, nasa_pic_dir):
 
     nasa_url = 'https://api.nasa.gov/planetary/apod'
 
-    response = requests.get(nasa_url,
-                            params=params)
+    response = requests.get(
+        nasa_url,
+        params=params
+    )
     response.raise_for_status()
 
     for pic_num, nasa_link in enumerate(response.json()):
@@ -80,9 +82,11 @@ def upload_images_to_telegram(telegram_token, chat_name, update_period):
         for inner_pic_path in listdir(f'{pic_path}/{dir_counter}'):
             photo_path = f'{pic_path}/{dir_counter}/{inner_pic_path}'
             with open(photo_path, 'rb') as photo:
-                bot.send_photo(chat_id=chat_id,
-                               photo=photo,
-                               timeout=2000)
+                bot.send_photo(
+                    chat_id=chat_id,
+                    photo=photo,
+                    timeout=2000
+                )
             time.sleep(update_period)
 
 
